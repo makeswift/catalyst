@@ -1,12 +1,16 @@
-import { List, Select, Shape, Slot, TextInput } from '@makeswift/runtime/controls';
+import { List, Select, Shape, Slot, Style, TextInput } from '@makeswift/runtime/controls';
 
 import { Accordions } from '~/components/ui/accordions';
 import { runtime } from '~/lib/makeswift/runtime';
 
+export const ACCORDION_COMPONENT_TYPE = 'catalyst-accordion';
+
 runtime.registerComponent(Accordions, {
-  type: 'catalyst-accordion',
+  type: ACCORDION_COMPONENT_TYPE,
   label: 'Catalyst / Accordion',
   props: {
+    className: Style(),
+    text: TextInput({ defaultValue: 'FAQ' }),
     accordions: List({
       label: 'Accordions',
       type: Shape({

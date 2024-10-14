@@ -91,7 +91,7 @@ export default function RootLayout({ children, params: { locale } }: Props) {
   return (
     <html className={`${inter.variable} font-sans`} lang={locale}>
       <head>
-        <DraftModeScript />
+        <DraftModeScript appOrigin={process.env.MAKESWIFT_APP_ORIGIN} />
       </head>
       <body className="flex h-screen min-w-[375px] flex-col">
         <Notifications />
@@ -103,5 +103,3 @@ export default function RootLayout({ children, params: { locale } }: Props) {
     </html>
   );
 }
-
-export const fetchCache = 'default-cache';

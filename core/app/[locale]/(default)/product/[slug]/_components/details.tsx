@@ -57,9 +57,10 @@ export const DetailsFragment = graphql(
 
 interface Props {
   product: FragmentOf<typeof DetailsFragment>;
+  info: React.ReactNode;
 }
 
-export const Details = ({ product }: Props) => {
+export const Details = ({ product, info }: Props) => {
   const t = useTranslations('Product.Details');
   const format = useFormatter();
 
@@ -77,6 +78,8 @@ export const Details = ({ product }: Props) => {
       <h1 className="mb-4 text-4xl font-black lg:text-5xl">{product.name}</h1>
 
       <ReviewSummary data={product} />
+
+      {info}
 
       {product.prices && (
         <div className="my-6 text-2xl font-bold lg:text-3xl">

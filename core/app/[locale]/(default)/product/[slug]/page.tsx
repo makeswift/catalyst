@@ -15,6 +15,12 @@ import { RelatedProducts } from './_components/related-products';
 import { Reviews } from './_components/reviews';
 import { Warranty } from './_components/warranty';
 import { getProduct } from './page-data';
+import { client } from '~/lib/makeswift/client';
+import { ACCORDION_COMPONENT_TYPE } from '~/components/ui/accordions/accordion.makeswift';
+import { Unstable_MakeswiftComponent } from '@makeswift/runtime/next';
+import { MakeswiftProvider } from '~/lib/makeswift/provider';
+import { draftMode } from 'next/headers';
+import { MAKESWIFT_PRODUCT_DETAIL_TYPE } from '~/components/ui/makeswift-product-detail/makeswift-product-detail.makeswift';
 
 interface Props {
   params: { slug: string; locale: LocaleType };
@@ -88,20 +94,35 @@ export default async function Product({ params: { locale, slug }, searchParams }
   }
 
   const category = removeEdgesAndNodes(product.categories).at(0);
+  const productDetailSnapshot = await client.unstable_getComponentSnapshot({
+    key: slug,
+    type: MAKESWIFT_PRODUCT_DETAIL_TYPE,
+    siteVersion: 'Working',
+  });
+  const accordionSnapshot = await client.unstable_getComponentSnapshot({
+    key: slug,
+    type: ACCORDION_COMPONENT_TYPE,
+    siteVersion: 'Working',
+  });
 
   return (
-    <>
+    <MakeswiftProvider previewMode={draftMode().isEnabled}>
       {category && <Breadcrumbs category={category} />}
 
       <div className="mb-12 mt-4 lg:grid lg:grid-cols-2 lg:gap-8">
         <Gallery product={product} />
-        <Details product={product} />
+        <Details
+          product={product}
+          info={<Unstable_MakeswiftComponent snapshot={productDetailSnapshot} />}
+        />
         <div className="lg:col-span-2">
           <Description product={product} />
           <Warranty product={product} />
           <Suspense fallback={t('loading')}>
             <Reviews productId={product.entityId} />
           </Suspense>
+
+          <Unstable_MakeswiftComponent snapshot={accordionSnapshot} />
         </div>
       </div>
 
@@ -110,8 +131,8 @@ export default async function Product({ params: { locale, slug }, searchParams }
       </Suspense>
 
       <ProductViewed product={product} />
-    </>
+    </MakeswiftProvider>
   );
 }
 
-export const runtime = 'edge';
+export const runtime = 'nodejs';
